@@ -1,229 +1,1217 @@
 ---
-title: "New York"
-author: "Aryan Gupta"
-date: "2022-11-21"
-output: html_document
+title: "STATS 15 Final Project -- NYC Apartment Rental Prices"
+output: pdf_document
+date: "By Megha Ravi, Aryan Gupta, Haniya Malik, and Saloni Panth"
 ---
+SECTION 1 - BACKGROUND
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+1.1 INSPIRATION:
 
+New York is the most populous city in the United States. Since property prices are so steep, about 70% of residents rent properties, contrasting how about 65% of residents in the US own their properties. Additionally, as a major metropolis, New York has one of the highest rent prices. Our dataset focuses on the area of Manhattan, where the rent prices are even higher. The reason behind this is because there is less housing per capita than other major cities in the US. Therefore we decided we will investigate numerous factors that could affect the rent prices of the apartments in New York. We are interested in answering the question “what affects the rent price of apartments in Manhattan?”. 
 
+RENT PRICE:
 
-Section 2 - Data Loading + Cleanup 
+The rent price for an apartment is the monthly payment for the property and in New York it typically includes utilities such as water and gas. However, electricity and internet bills are usually the responsibility of the tenant. 
+
+1.2 DATASET BACKGROUND:
+
+Where did we get our data?
+StreetEasy is the website from which the dataset was scraped, in June of 2016. StreetEasy primarily gets its data from two sources. The first is the New York City department of finance sales data. This data includes sales, prices, dates, and basic information about the building. The second source is through listings posted by brokers. This is where the majority of the data on StreetEasy comes from. 
+
+HOW LISTINGS CREATED ON STREETEASY:
+
+Listings on StreetEasy are posted through your agent account by selecting your rentals and clicking create new rental. You then are able to enter the address and unit number, create the listing, and then add as much detail to it as possible. 
+
+1.3 NEIGHBORHOODS:
+
+Upper East Side: This is considered one of the more posh neighborhoods of New York and it occupies 1.776 square miles.
+
+Greenwich Village: This is known for its artistic residents and alternative culture, it occupies 0.29 square miles.
+
+Midtown: Midtown is home to times square and is the city’s primary central business district. It occupies 2.25 square miles.
+
+Soho: Soho is a top shopping destination known for its fashionable crowds, it occupies 1 square mile. 
+
+Central Harlem: It is the heart of a historic African American neighborhood. It occupies 1.4 square miles.
+
+Central Park South: This is home to central park, it occupies 1.31 square miles. 
+
+East Harlem: It is a showcase to Puerto Rican culture, it occupies 4.4 square miles. 
+
+Midtown East: It has easy access to anywhere in the city and is home to waterfront views. It occupies 1.15 square miles. 
+
+Battery Park City: It is set along the Hudson River. It occupies 0.21 square miles. 
+
+Flatiron: This is home to office high rises and tall apartment buildings. It occupies 0.39 square miles.
+
+Lower East Side: In this neighborhood, older buildings and alleyways are mixed in with upscale apartments. It occupies 0.84 square miles. 
+
+East Village: This is home to many bars and performance spaces. It occupies 0.77 square miles.
+
+Gramercy Park: This is a well to do residential area with historic bars and fashionable restaurants. It occupies 1.13 square miles.
+
+Financial District: This is home to wall street and skyscrapers. It occupies 0.45 square miles. 
+
+Chelsea: It has mainly low rise apartment buildings and is home to attractions such as the New York highline. It occupies 0.77 square miles. 
+
+Inwood: Inwood is mainly a mix of commercial streets. It occupies 0.91 square miles.
+
+Tribeca: It is known for old industrial buildings and historical commercial buildings. It occupies 0.33 square miles.
+
+Washington Heights: It is New York’s little Dominican Republic and is known for being safe. It occupies 1.66 square miles. 
+
+Chinatown: It is one of the oldest Chinese enclaves. It occupies 0.77 square miles. 
+
+Roosevelt Island: Relative to New York this area has a high crime rate. It occupies 1.78 square miles. 
+
+West Village: Fashionable neighborhood with designer boutiques and restaurants, it occupies 0.41 square miles.
+
+Midtown West: This is also known as Hell’s kitchen. It occupies 0.84 square miles. 
+
+Midtown South: It is home to the garment district. It occupies 0.37 square miles.
+
+Hamilton Heights: It contains the historic district of Sugar Hill. It occupies 0.42 square miles. 
+
+Stuyvesant Town/PCV: It is a large post World War ll residential area. It occupies 0.23 square miles. 
+
+Morningside Heights: It is home to several religious institutions. It occupies 0.47 square miles. 
+
+Little Italy: It is known for its large Italian population. It occupies roughly 2 square miles.
+
+Nolita: It is known for its designer jewelry shops and home design stores. It occupies 4 blocks. 
+
+Long Island City: It is known for its high rises with nice views to Manhattan. It occupies 3.33 square miles. 
+
+Upper West Side: It is home to performing arts institutions. It occupies 1.93 square miles. 
+
+Lower West Side: It has its own village vibe with lots of colorful art. It occupies 2.8 square miles. 
+
+1.4 VARIABLES OF THE DATASET:
+
+EXPLANATORY VARIABLES:
+
+Bedrooms: The amount of rooms in an apartment.
+
+Bathrooms: The amount of bathrooms in an apartment.
+
+Size_sqft: The size per square feet of an apartment. 
+
+Min_to_subway: The distance in minutes to the nearest subway station.
+
+Floor: The floor that the apartment is on. 
+
+Building_age_yrs: How old the building the apartment is in is in years.
+
+No_fee: Whether or not there is a broker's fee for the apartment.
+
+Has_roofdeck: Whether or not there is a patio outside the building.
+
+Has_washer_dryer: Whether or not the apartment includes a washer and dryer.
+
+Has_doorman: Whether or not the building has a doorman.
+
+Has_elevator: Whether or not there is an elevator in the building.
+
+Has_dishwasher: Whether or not there is a dishwasher in the apartment.
+
+Has_patio: Whether or not there is a patio in the apartment.
+
+Has_gym: Whether or not the apartment building has a gym. 
+
+neighborhood: which neighborhood the apartment is located in out of the 31 unique neighborhoods in our dataset.
+
+RESPONSE VARIABLE:
+
+Rent: The rent per month for the particular apartment.
+
+METRIC:
+
+Subway stations play a large role in a metropolitan city like New York. Due to congestion and traffic many people do not own cars and rely on the subway as a primary mode of transportation. There are currently 151 subway stations in Manhattan, and our dataset records the distance in minutes to the nearest subway from the particular property. We use this variable as a metric to create scores for apartments and they are classified as “close” or “far”. 
+
+SECTION 2 - DATA LOADING AND CLEANUP
+
 2.1 - Loading, joining and cleaning our data
 
 ```{r}
+library(tidyverse)
 new_york <- read.csv("manhattan.csv")
 
-rental_dataset <- new_york %>%
-  select(-rental_id, -borough) 
+rental_dataset1 <- new_york %>%
+  select(-rental_id, -borough)
 
-head(rental_dataset)
+head(rental_dataset1)
+```
+
+The first thing to do is check if there are an NA values in our data set.
+```{r}
+rental_dataset1 %>%
+  summarise_all(funs(sum(is.na(.))))
 
 ```
 
+After summarizing the dataset, we can see that there are no NA values which means we can proceed.
 
 
 
+2.2 - FEATURE ENGINEERING
 
-```{r}
-library(ggplot2)
-ggplot(rental_dataset) +
-  aes(x = floor) +
-  geom_histogram(bins = 10, color = "purple", fill = "pink") 
-```
-We plot out the variable of floors to check if there are any outliers. Clearly there are some outliers around 75 floors. The distribution is highly skewed to the right. 
+
+METRIC - Minutes to the Subway 
 
 ```{r}
-library(ggplot2)
-data(new_york)
-ggplot(new_york) +
-  aes(x = size_sqft) +
-  geom_histogram(bins = 10, color = "purple", fill = "pink") 
-```
-
-We plot out the variable of square feet to check if there are any outliers. Clearly there are some outliers around 3,500 square feet and 0 square feet. This distribution is skewed mostly right. 
-
-```{r}
-filteredNY <- new_york %>%
-ggplot(filteredNY) +
-  aes(x = size_sqft) +
-  geom_bar( color = "purple", fill = "blue") 
-```
-```{r}
-max(new_york$size_sqft)
-
-```
-
-
-After we have filtered out ouliers and plotted the data for the square footage, the graph is shown to be more clearly skewed to the right. 
-
-```{r}
-filteredNY <- new_york %>%
-  filter(floor < 75)
-
-ggplot(filteredNY) +
-  aes(x = floor) +
-  geom_histogram(bins = 10, color = "purple", fill = "blue") 
-```
-
-After we have filtered out ouliers and plotted the data for the number of floors, the graph is shown to be more clearly skewed to the right. 
-
-
-
-```{r}
-rental_dataset %>%
-  ggplot(aes(x = bathrooms)) + geom_histogram(fill='lightgreen', color='black', bin = 30) +
-xlab("Bathrooms") + ylab("Count") + ggtitle("Bathrooms histogram")
-```
-
-The distribution is fairly skewed right with most apartments having 1-2 bathrooms, however there are no major outliers.
-
-
-```{r}
-rental_dataset %>%
-  ggplot(aes(x = bedrooms)) + geom_histogram(fill='pink', color='black') +
-xlab("Bedrooms") + ylab("Count") + ggtitle("Bedrooms histogram") 
-```
-
-The distribution is fairly even with a slight skew to the right. There is an abundance of whole number bedrooms with a slight number of half-bedrooms.
-
-
-```{r}
-rental_dataset %>%
-  ggplot(aes(x = building_age_yrs)) + geom_histogram(fill='orange', color='black', bins = 30) +
-xlab("Building Age in Years") + ylab("Count") + ggtitle("Building Age histogram") 
-```
-
-The distribution is even with one outlier which is the building older than 175 years.
-
-```{r}
-rental_dataset %>%
-  ggplot(aes(x = rent)) + geom_histogram(fill='purple', color='black', bins = 30) +
-xlab("Rent Price in Dollars") + ylab("Count") + ggtitle(" Rental Price histogram")
-```
-
-The distribution is slightly skewed to the right, with most prices being between 1,000 and 5,000 dollars, however the removal of outliers may not be necessary. 
-
-```{r}
-rental_dataset %>%
-  ggplot(aes(x = min_to_subway)) + geom_histogram(fill='purple', color='black', bins = 30) +
+rental_dataset1 %>%
+  ggplot(aes(x = min_to_subway)) + 
+  geom_histogram(fill='purple', color='black', bins = 30) +
 xlab("Minutes to the Subway") + ylab("Count") + ggtitle("Time to Subway histogram") 
 ```
-The distribution is slightly skewed to the right, with most times being between 0 and 10 minutes to the nearest subway. Interestingly enough lets look at the 40+ minutes to the subway. 
+The distribution is slightly skewed to the right, with most times being between 0 and 10 minutes to the nearest subway. 
+Interestingly enough, let's look at the times that are 40 minutes or greater to the subway which could constitute as outliers. 
 
 ```{r}
-rental_dataset %>%
+rental_dataset1 %>%
   filter(min_to_subway>40) %>%
-  distinct(neighborhood)
+  head()
 ```
-
-After checking on Google and street easy we decided to drop these values at it does not make sense for someone to talk 40+ minutes to walk to the subway. In all these 5 neighborhoods there is a subway that takes less than 40 minutes to walk. Even after dropping these rows we will have enough values in our dataset. Let's now look at the graph without the 40+ minutes to the subway present.
-
+Due to prior knowledge and after checking StreetEasy, we decided to drop these values as it does not make sense for someone to walk 40 or more minutes to the subway from an apartment in Manhattan. In these 5 neighborhoods, there are generally nearby subway stations that takes less than 40 minutes to walk to from an apartment. Even after dropping these rows, we will have enough values in our dataset. 
+Let's now look at the graph without the 40 or more minute values to the subway present.
 
 ```{r}
-rental_dataset <- rental_dataset %>%
+rental_dataset1 <- rental_dataset1 %>%
   filter(min_to_subway<40)
-  
-rental_dataset %>%
-    ggplot(aes(x = min_to_subway)) + geom_histogram(fill='purple', color='black', bins = 30) +
+
+rental_dataset1 %>%
+    ggplot(aes(x = min_to_subway)) + 
+  geom_histogram(fill='purple', color='black', bins = 30) +
 xlab("Minutes to the Subway <40") + ylab("Count") + ggtitle("Time to Subway histogram") 
-view(rental_dataset)
+
 ```
-
-
-
+Furthermore, in order for the time to the subway from an apartment to be significant in our analysis, 
+we decided to group the time into two categories: "close" and "far". To group the time into close/far, times 
+below the mean time can be described as "close" and times above the mean time can be described as "far". 
 
 ```{r}
-rental_dataset %>% pivot_longer(cols = starts_with("has")) %>% 
-  select(location, name, value) %>%
-  group_by(location, name) %>%
-  summarize(prop = mean(value)) %>%
-  filter(!is.na(location))%>%
-  filter(location=="Midtown") %>%
-  ggplot(aes(x = name, fill = name, y = prop))+ theme(text = element_text(size=8)) +
-  geom_col(color = "black") + xlab("Midtown") + ylab("Frequency") + ggtitle("Amenties per neighborhood")
+mean_min_to_subway = mean(rental_dataset1$min_to_subway)
+mean_min_to_subway
+
+rental_dataset1 <- rental_dataset1 %>%
+  add_column(time_status= NA)
+
+for(i in 1:nrow(rental_dataset1)){
+  if(rental_dataset1[i, 5] < mean_min_to_subway){
+   rental_dataset1[i, 17] = "close"
+  } else{
+       rental_dataset1[i, 17] = "far"
+  }
+
+}
+
+rental_dataset1 %>%
+  select(neighborhood, min_to_subway, time_status) %>%
+  head()
 
 ```
 
+This method makes sense as with prior knowledge of NYC, times greater than around 5 minutes to the nearest subway
+station can be seen as far, while times less than around 5 minutes can be seen as close. 
+
+Neighborhoods
 
 ```{r}
-rental_dataset %>% pivot_longer(cols = starts_with("has")) %>% 
-  select(location, name, value) %>%
-  group_by(location, name) %>%
-  summarize(prop = mean(value)) %>%
-  filter(!is.na(location))%>%
-  filter(location=="Upper Manhatttan") %>%
-  ggplot(aes(x = name, fill = name, y = prop))+ theme(text = element_text(size=8)) +
-  geom_col(color = "black") + xlab("Upper Manhatttan") + ylab("Frequency") + ggtitle("Amenties per neighborhood")
+library(tidyverse)
+rental_dataset1 %>%
+  ggplot(aes(x = neighborhood)) + 
+  geom_bar(fill = 'pink', color = 'black', bins = 30) + 
+  xlab("neighborhood") + ylab("Count") + 
+  ggtitle("Distribution of Neighborhoods in Manhattan") + 
+  theme(axis.text.x = element_text(angle = 90))
+```
+As we can see, there are many neighborhoods in Manhattan; in our dataset, there are rent prices collected from 32 neighborhoods. However, because there are so many neighborhoods, it may be difficult to clearly analyze the impact of neighborhood on rent price, especially since some neighborhoods do not have much data in comparison to others. Thus, we will pick and focus on a few neighborhoods with relatively adequate amount of data and that are geographically in various places in Manhattan: Central Harlem, Upper West Side, Chelsea, Financial District, Midtown West, and the Upper East Side. 
+
+To make our future analysis simpler, we will add a column to our dataset that specifies the six selected neighborhoods and adds NA values for the other neighborhoods since we do not want to include them.
+
+```{r}
+rental_dataset1$neigh_selected[rental_dataset1$neighborhood == c("Central Harlem")]= "Central Harlem"
+rental_dataset1$neigh_selected[rental_dataset1$neighborhood == c("Upper West Side")] = "Upper West Side"
+rental_dataset1$neigh_selected[rental_dataset1$neighborhood == c("Chelsea")] = "Chelsea"
+rental_dataset1$neigh_selected[rental_dataset1$neighborhood == c("Financial District")] = "Financial District"
+rental_dataset1$neigh_selected[rental_dataset1$neighborhood == c("Midtown West")] = "Midtown West"
+rental_dataset1$neigh_selected[rental_dataset1$neighborhood == c("Upper East Side")] = "Upper East Side"
+
+rental_dataset1 %>%
+  select(neighborhood, neigh_selected) %>%
+  head()
+
+rental_dataset1 %>%
+ filter(!is.na(neigh_selected)) %>%
+  ggplot(aes(x = neigh_selected)) + 
+  geom_bar(fill = 'pink', color = 'black') + 
+  xlab("selected neighborhood") + ylab("Count") +
+  ggtitle("Distribution of Selected Neighborhoods in Manhattan") 
 
 ```
 
-3.3: THREE RELATIONSHIP GRAPHS 
+In addition to neighborhood, we also think that it would be interesting to see if the geographical groupings of Upper, Midtown, and Downtown Manhattan have an effect on the rent. We will group the different neighborhoods based on their location in Manhattan.
+
+```{r}
+  unique(rental_dataset1$neighborhood)
+```
+We will be grouping the different neighborhoods in three sections depending on where they are located in Manhattan. We chose to include all the neighborhoods except Roosevelt Island as it is considered part of both Lower and Upper Manhattan.
+
+```{r}
+#Neighborhoods in Upper Manhattan
+rental_dataset1$location[rental_dataset1$neighborhood == c("Upper East Side")] = "Upper Manhatttan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Manhattanville")] = "Upper Manhatttan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Upper West Side")] = "Upper Manhatttan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Hamilton Heights")] = "Upper Manhatttan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("West Harlem")] = "Upper Manhatttan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Central Park South")] = "Upper Manhatttan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Morningside Heights")] = "Upper Manhatttan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Central Harlem")] = "Upper Manhatttan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Inwood")] = "Upper Manhatttan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Upper East Side")] = "Upper Manhatttan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Washington Heights")] = "Upper Manhatttan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("East Harlem")] = "Upper Manhatttan"
+
+
+#Neighborhoods in Midtown
+rental_dataset1$location[rental_dataset1$neighborhood == c("Midtown")] = "Midtown"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Midtown South")] = "Midtown"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Midtown East")] = "Midtown"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Flatiron")] = "Midtown"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Stuyvesant Town/PCV")] = "Midtown"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Midtown West")] = "Midtown"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Gramercy Park")] = "Midtown"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Chelsea")] = "Midtown"
+
+#Neighborhoods in Lower Manhattan 
+rental_dataset1$location[rental_dataset1$neighborhood == c("Financial District")] = "Lower Manhattan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Chinatown")] = "Lower Manhattan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Little Italy")] = "Lower Manhattan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Nolita")] = "Lower Manhattan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Soho")] = "Lower Manhattan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Lower East Side")] = "Lower Manhattan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Battery Park City")] = "Lower Manhattan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Tribeca")] = "Lower Manhattan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("Greenwich Village")] = "Lower Manhattan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("East Village")] = "Lower Manhattan"
+rental_dataset1$location[rental_dataset1$neighborhood == c("West Village")] = "Lower Manhattan"
+
+```
+
+ Let's plot the distribution of the location of Upper, Lower, and Midtown Manhattan. 
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(location)) %>%
+ggplot(aes(x = location)) + 
+  geom_bar(fill = 'darkseagreen1', color = 'black') + 
+  xlab("Location") + ylab("Count") + 
+  ggtitle("Distribution of Upper, Lower and Midtown Manhattan locations")
+```
+There are about the same number of apartments in Midtown and Upper Manhattan, while about 3/4 the apartments in Lower Manhattan compared to Midtown and Upper Manhattan. 
+
+SECTION 3 - EXPLORATORY DATA ANALYSIS
+
+3.1: UNIVARIATE PLOTS 
+RENT
+Let's plot the distribution of the rent price to check for outliers. 
+```{r}
+rental_dataset1 %>%
+  ggplot(aes(x = rent)) + 
+  geom_histogram(fill = 'red', color = 'black', bins = 30) +
+  xlab("Rent") + ylab("Count") + ggtitle("Distribution of Rent Prices in Manhattan")
+```
+As we can see, the distribution of the rent prices is skewed to the right. It looks like there are possible outliers around 20,000 dollars.
+To be more precise, let's determine and examine the possible outliers by calculating the standard deviation, z-scores and mean of the rent prices. 
+After filtering by |z| > 2, we can investigate these high values with similar apartment listings from the same neighborhood in 2016 on StreetEasy. 
+
+```{r}
+rent_mean <- mean(rental_dataset1$rent)
+rent_sd <- sd(rental_dataset1$rent)
+
+rental_dataset1 <- rental_dataset1 %>%
+  mutate(rent_z_score = (rent-rent_mean)/rent_sd)
+
+rental_dataset1 %>%
+  filter(abs(rent_z_score) > 2) %>%
+  select(rent, neighborhood, bedrooms, bathrooms, size_sqft) %>%
+  arrange(desc(rent)) %>%
+  head()
+```
+When we see these possible outliers that are skewing the data,  
+that the highest rent price is 20,000 per month, in neighborhoods like Soho and Tribeca. 
+Let us look at similar apartment listings from StreetEasy in 2016 to determine whether 
+these prices were legitimate at the time. 
+
+![](Soho1.png)
+
+![](Soho2.png)
+In the Price History, we can see that the apartment was once 20,000 dollars in 2016. After investigating this rent listing in the Soho neighborhood, 
+we determine that the high rent price of 20,000 dollars is legitimate 
+and that we can keep high rent prices such as these in our dataset. 
+
+**Floors**
+
+```{r}
+ggplot(rental_dataset1, aes(x = floor)) +
+  geom_histogram(color = "black", fill = "blue", bins = 30) + 
+  xlab("Floors") + 
+  ylab("Count") + ggtitle("Distribution of Floors")
+```
+
+In the distribution of floors, which is skewed to the right, we can see that there are possible outliers around 75 floors. Let's investigate this. 
+```{r}
+rental_dataset1 %>%
+  select(neighborhood,floor) %>%
+  filter(floor > 75) %>%
+  arrange(desc(floor))
+```
+
+To determine if these high values of floors are legitimate, let's look on StreetEasy to verify. 
+
+![](floor1.png)
+
+As we can see, apartments can realistically have high floors such as floor 83. Thus,
+we can keep the high floor values in our dataset. 
+
+We also see a possible outlier around a floor of 0. 
+```{r}
+rental_dataset1 %>%
+  select(neighborhood,floor) %>%
+  filter(floor < 1)
+```
+We decide to take out this value with floor 0 because the label of floor "0" is uncommon and we do not have enough data from StreetEasy to verify that this apartment could be in the basement of a building or below ground.
+
+```{r}
+rental_dataset1 <- rental_dataset1 %>%
+  filter(floor > 0)
+
+ggplot(rental_dataset1, aes(x = floor)) +
+  geom_histogram(color = "black", fill = "blue", bins = 30)+ xlab("Floors") + 
+  ylab("Count") + ggtitle("Distribution of Floor")
+```
+
+** Sqft**
+
+```{r}
+library(ggplot2)
+
+ggplot(rental_dataset1, aes(x = size_sqft)) +
+  geom_histogram(color = "black", fill = "chocolate4", bins = 30) +
+  xlab("Square Feet") + 
+  ylab("Count") + ggtitle("Distribution of Apartment Size in Square Feet")
+```
+
+The distribution of the size in square feet is skewed right. We can see that there is a possible outlier around 3500 square feet; let's investigate this. 
+
+```{r}
+rental_dataset1 %>%
+  filter(size_sqft > 3500) %>%
+  select(neighborhood, size_sqft, rent, bedrooms)
+```
+As we can see, a possible outlier is 4800 square feet in the Soho neighborhood. Let us find an apartment in the Soho neighborhood with a relatively similar size in square feet to determine if this is legitimate. 
+![](squarefeet1.png)
+![](squarefeet2.png)
+
+
+The rent price the apartment was rented at was 22,000 dollars, while the rent price in our dataset at the time the listing was scraped is set at 17,500 dollars; the 4,500 dollars difference is substantial. Because StreetEasy does not have data on the previous rent price of this listing at times earlier in the year closer to June, we decide to drop this value as the rent price difference is quite substantial and cannot be thoroughly verified.
+
+Let's investigate the other possible outlier of the Midtown West Apartment. 
+
+![](squarefeet3.png)
+
+![](squarefeet4.png)
+The rent price and square feet size are the same, so we determine that this high value of 3680 square feet is legitimate and that we can keep it in our dataset. As we replot the distribution of size in square feet, the distribution looks much more reasonable.
+
+```{r}
+rental_dataset1 <- rental_dataset1 %>%
+  filter(size_sqft < 4800) 
+
+ggplot(rental_dataset1, aes(x = size_sqft)) +
+  geom_histogram(color = "black", fill = "chocolate4", bins = 40) + xlab("Square Feet") + 
+  ylab("Count") + ggtitle("Distribution of Apartment Size in Square Feet")
+```
+
+Next, we look at the square feet of the apartments depending on which neighborhood type they are in.
 
 ```{r}
 rental_dataset1 %>%
   filter(!is.na(location)) %>%
-ggplot(aes(x=bedrooms, y= bathrooms, color = size_sqft)) + 
-geom_point() +
-geom_smooth(method="lm", se = FALSE) +
-xlab("Bedrooms") + ylab("Bathrooms") + ggtitle("Bedrooms vs. Bathrooms vs Square Feet")
+  ggplot(aes(x=size_sqft)) + 
+  geom_histogram(bins = 10, color = "purple", fill = "pink") + 
+  facet_wrap(~location)
 ```
+
+
+*BUILDING AGE**
 ```{r}
 rental_dataset1 %>%
-  filter(!is.na(neigh_selected)) %>%
-ggplot(aes(x=bedrooms, y= bathrooms, color = size_sqft)) + 
-geom_point() +
-geom_smooth(method="lm", se = FALSE) +
-xlab("Bedrooms") + ylab("Bathrooms") + ggtitle("Bedrooms vs. Bathrooms vs Square Feet by Neighborhood") + facet_wrap(~neigh_selected)
+  ggplot(aes(x = building_age_yrs)) + 
+  geom_histogram(fill='orange', color='black', bins = 30) +
+xlab("Building Age in Years") + ylab("Count") + ggtitle("Distribution of Building Age") 
 ```
+As we can see, the distribution is relatively even with a possible outlier at around 175 years. Let's look at these high building age values. 
+
+```{r}
+rental_dataset1 %>%
+  filter(building_age_yrs > 175) %>%
+  select(neighborhood, building_age_yrs) %>%
+  arrange(desc(building_age_yrs)) %>%
+  head()
+```
+In order to verify that buildings can realistically have an age of 180 years, let's look at on StreetEasy for buildings built in 1836, since in 2016, a building age of 180 years would be constructed in 1836. 
+![](buildage1.png)
+![](buildage2.png)
+
+As we can see in the sample buildings, a building that is 180 years old is legitimate, such as in the Financial District and West Village, where most of these high values are occurring. Thus, we can keep these values in our dataset. 
+
+**BEDROOMS**
+
+```{r}
+rental_dataset1 %>%
+  ggplot(aes(x = bedrooms)) + geom_histogram(fill='pink', color='black') +
+xlab("Bedrooms") + ylab("Count") + ggtitle("Distribution of Bedrooms") 
+```
+
+The distribution is fairly even with a slight skew to the right. There is an abundance of whole number bedrooms with a slight number of half-bedrooms. We do not need to investigate any outliers because it is reasonable to have 5 bedrooms in an apartment. Furthermore, 0 bedrooms mostly indicates that the apartment is a studio rental. 
+
+```{r}
+rental_dataset1 <- rental_dataset1 %>%
+    filter(bedrooms %in% c("0","1","2","3","4","5")) 
+
+
+rental_dataset1 %>%
+  ggplot(aes(x = bedrooms)) + geom_histogram(fill='pink', color='black') +
+xlab("Bedrooms") + ylab("Count") + ggtitle("Bedrooms histogram") 
+
+```
+After removing the half bedrooms we can most clearly see this unimodal graph with the peak being at 1 bedrooms. The graph still skews to the right. 
+
+Now we will examine if the bedrooms change depending on type of neighborhood. 
+
+```{r}
+rental_dataset1 %>%
+    filter(!is.na(location)) %>%
+  ggplot(aes(x = bedrooms)) + geom_histogram(fill='pink', color='black') +
+xlab("Bedrooms") + ylab("Count") +
+  ggtitle("Bedrooms histogram") + facet_wrap(~location)
+
+```
+Not surprisingly, they dont. The peak bedrooms is still one and the general shape of the graph is same for all 3 locations.
+
+
+**Bathrooms**
+
+```{r}
+rental_dataset1 %>%
+  ggplot(aes(x = bathrooms)) + 
+  geom_histogram(fill='lightgreen', color='black', bins = 15)+
+xlab("Distribution of Bathrooms") + ylab("Count") + ggtitle("Bathrooms histogram")
+```
+The distribution is fairly skewed right with most apartments having 1-2 bathrooms, however there are no major outliers. In Manhattan, it is reasonable to have 0 bathrooms or 5 bathrooms depending on the apartment rental.
+
+
+**Amenities**
+
+Let's see how common the amenities are in Manhattan. 
+
+```{r}
+amenities <- rental_dataset1 %>%
+  select(has_roofdeck,has_washer_dryer,has_doorman,has_elevator,has_dishwasher,has_patio,has_gym) 
+  name_of_amenities = colnames(amenities)
+amenities_frequencies <- tibble(colMeans(amenities))
+add_column(amenities_frequencies,name_of_amenities)
+```
+Not surprisingly, most apartments in Manhattan don't have a lot of amenities. The most frequent amenity in Manhattan is an elevator while the most uncommon amenity is a patio.
+
+Let's see the distribution of amenities across all of the Manhattan apartment listings. 
+```{r}
+rental_dataset1 %>% pivot_longer(cols = starts_with("has")) %>% 
+  select(name, value) %>%
+  group_by(name) %>%
+  summarize(prop = mean(value)) %>%
+  ggplot(aes(x = name, y = prop, fill = name))+ 
+  theme(text = element_text(size=8)) +
+  geom_col(color = "black" ) + xlab("Manhattan") + ylab("Frequency") + ggtitle("Amenties in Manhattan")
+```
+**Distance to Subway**
+
+Let's look at the subway variable again but the time looking at the mean time it takes for a person to get to the subway. Let's first look again at the breakdown of count vs distance to subway, this time factoring in the time_status variable. 
 ```{r}
 rental_dataset1 %>%
   filter(!is.na(location)) %>%
-ggplot(aes(x=bedrooms, y= bathrooms, color = size_sqft)) + 
-geom_point() +
-geom_smooth(method="lm", se = FALSE) +
-xlab("Bedrooms") + ylab("Bathrooms") + ggtitle("Bedrooms vs. Bathrooms vs Square Feet by Location") + facet_wrap(~location)
+  ggplot(aes(x=min_to_subway, fill = time_status))+ geom_bar(position = "dodge") + 
+  xlab("Distance to Subway") + ggtitle("Distance to Subway Frequency")
 ```
+The distribution is skewed to the right. The distribution of the minutes to the subway has two main peaks; for times that are "close", the peak is around 2 minutes, while for times that are "far", the peak is around 5-6 minutes. Because we assigned our close/far groupings according to the mean, it is important to note that 5 minutes is included as "far". 
+
+
+Let's look at the split between the close and far times. 
 ```{r}
 rental_dataset1 %>%
-  filter(!is.na(neigh_selected)) %>%
-ggplot(aes(x=bathrooms, y= floor))+ 
+  ggplot(aes(x = time_status, fill = time_status)) + geom_bar(color='black') +
+xlab("Time Designation") + ylab("Count") + ggtitle("Close/Far Distribution") 
+```
+When comparing the Close/Far Distribution graph to the previous Time to Subway Distribution graph, It makes sense that there are more apartments considered close to the subway station as close times under 5 minutes had much greater frequencies than far times greater than 5. This makes sense as Manhattan has a good metro system and has many subway lines.
+
+SECTION 3.2: BIVARIATE PLOTS
+
+**Bedrooms**
+
+```{r}
+rental_dataset1 %>%
+ggplot(aes(x=bedrooms, y= size_sqft)) + 
+geom_point(color = "purple") +
+geom_smooth(method="lm", color="purple") +
+xlab("Bedrooms") + ylab("Square Feet")+
+  ggtitle("Bedrooms vs. Square Feet")
+
+```
+
+As expected, We can see there is a positive correlation; as the square feet increases, so does the number of bedrooms. This makes sense as biggest apartments can fit more bedrooms. 
+
+Next we will compare the amount of bedrooms with the amount of bathrooms. 
+```{r}
+rental_dataset1 %>%
+ggplot(aes(x=bedrooms, y= bathrooms)) + 
+geom_point(color = "black") +
+geom_smooth(method="lm", color="orange") +
+xlab("Bedrooms") + ylab("Bathrooms") + 
+  ggtitle("Bedrooms vs. Bathrooms")
+```
+
+Similarly to the previous graph we can see that bedrooms in fact does have an affect on bathrooms. The more bedrooms there are, the more bathrooms there will be this. This also makes a lot of sense since a big apartment can fit more bathrooms. 
+
+**Bathrooms**
+```{r}
+rental_dataset1 %>%
+ggplot(aes(x=bathrooms, y= size_sqft)) + 
 geom_point(color = "black") +
 geom_smooth(method="lm", se = FALSE, color = 'blue') +
- ggtitle("Bathrooms vs floor vs neighborhood") + facet_wrap(~neigh_selected)
+ ggtitle("Bathrooms vs size square feet")
 ```
+As expected we see that bathrooms do have an impact on the square feet of the apartment. This is expected as more bathrooms usually have more bedrooms which in turn leads to a bigger apartment. 
+
 ```{r}
 rental_dataset1 %>%
   filter(!is.na(location)) %>%
-ggplot(aes(x=bathrooms, y= floor))+ 
+ggplot(aes(x=bedrooms, y= bathrooms, color = size_sqft)) + 
+geom_point() +
+geom_smooth(method="lm", se = FALSE) +
+xlab("Bedrooms") + ylab("Bathrooms")+
+  ggtitle("Bedrooms vs. Bathrooms vs Square Feet by Location") 
+```
+
+
+**Building Age**
+
+We're curious to see if comparing the age of the building to the floor you live on has any correlation.
+```{r}
+rental_dataset1 %>%
+ggplot(aes (x= building_age_yrs, y = floor)) + 
 geom_point(color = "black") +
 geom_smooth(method="lm", se = FALSE, color = 'blue') +
- ggtitle("Bathrooms vs floor vs location") + facet_wrap(~location)
+ ggtitle("Floor vs Building Age ")+
+  xlab("Age of Building") +ylab("Floor") 
 ```
+We can see that there is little to no correlation between the age of building and the floor. 
+
+Building Age Years vs Square Feet
+
+```{r}
+ggplot(rental_dataset1, aes(x = building_age_yrs, y = size_sqft)) +
+geom_point(size = 0.5, color = "black") + 
+  geom_smooth(method = "lm") + 
+  xlab("Building Age") + ylab("Size") + ggtitle("Building Age vs Size")
+```
+
+The following scatterplot explores the relationship between how old a building is, and the size of the building to explore the question: Do newer buildings have apartments larger or smaller in size?
+We draw the conclusion from the graph that there is little to no correlation between the two variables, and newer buildings can have apartments of any size.
+
+Lets see if there is any correlation when we factor in location. 
 ```{r}
 rental_dataset1 %>%
+  filter(!is.na(location)) %>%
+ggplot(aes(x = building_age_yrs, y = size_sqft)) +
+geom_point(size = 0.5, color = "black") + 
+  geom_smooth(method = "lm") +  
+  xlab("Building Age") + ylab("Sqft")+
+  ggtitle("Building Age vs Size") + facet_wrap(~location)
+```
+We can see that even if we factor based on location there is still little to no correlation between building age and sqft. 
+
+**Floor**
+
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(location)) %>%
+ggplot(aes(x = floor, y = size_sqft)) +
+geom_point(size = 0.5, color = "black") + 
+  geom_smooth(method = "lm") +   
+  xlab("Floor") + ylab("Sqft")+ ggtitle("Building Age vs Size") 
+
+```
+We can see that there is little to none correlation between floor and sqft. The floor you are on does not determine the square feet of the apartment. 
+
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(location)) %>%
+ggplot(aes(x = floor, y = size_sqft)) +
+geom_point(size = 0.5, color = "purple") + 
+  geom_smooth(method = "lm") +   xlab("Floor") +
+  ylab("Sqft") + ggtitle("Building Age vs Size") + facet_wrap(~location)
+
+rental_dataset1 %>%
   filter(!is.na(neigh_selected)) %>%
-  ggplot(aes(x=size_sqft, y= floor)) +geom_point(color = "black") +geom_smooth(method="lm", se = FALSE, color ='blue') +ggtitle("Size SQFT vs Floor") + facet_wrap(~neigh_selected)
+ggplot(aes(x = floor, y = size_sqft)) +
+geom_point(size = 0.5, color = "purple") + geom_smooth(method = "lm") + 
+  xlab("Floor") + ylab("Sqft") + ggtitle("Building Age vs Size")+
+  facet_wrap(~neigh_selected)
+
+```
+
+Even after factoring in differnt neighborhoods and different locations we can see that there is close to no correlation between floor and sqft. 
+
+**Amenities**
+Let's look at the distribution of amenities by neighborhood.
+```{r}
+rental_dataset1 %>% pivot_longer(cols = starts_with("has")) %>% 
+  select(neigh_selected, name, value) %>%
+  group_by(neigh_selected, name) %>%
+  summarize(prop = mean(value)) %>%
+  filter(!is.na(neigh_selected))%>%
+  ggplot(aes(x = name, fill = name, y = prop))+
+  theme(text = element_text(size=8)) +
+  geom_col(color = "black", position = "dodge") +
+  xlab("Manhattan") + ylab("Frequency") + 
+  ggtitle("Amenties per Selected Neighborhoods") + facet_wrap(~neigh_selected)
+```
+
+Let's look at the distribution of amenities by neighborhood group. 
+```{r}
+rental_dataset1 %>% pivot_longer(cols = starts_with("has")) %>% 
+  select(neigh_selected, name, value) %>%
+  group_by(neigh_selected, name) %>%
+  summarize(prop = mean(value)) %>%
+  filter(!is.na(neigh_selected))%>%
+  ggplot(aes(x = name, fill = neigh_selected, y = prop))+ 
+  theme(text = element_text(size=8)) +
+  geom_col(color = "black", position = "dodge") +
+  xlab("Manhattan") + ylab("Frequency") + ggtitle("Amenties per Neighborhood Group")
+```
+From the graph we can see that there is a lot of variation in which amenities in apartment depending on which neighborhood you live in. Even after factoring different neighborhoods we can see most apartments do not have a lot of amenities. 
+
+**Subway Time vs Neighborhood and Location**
+
+We are now trying to figure out the average minutes it takes to the subway depending on neighborhood and the location you live. 
+
+```{r}
+rental_dataset1 %>%
+  group_by(location) %>%
+  filter(!is.na(location)) %>%
+  summarize(value = mean(min_to_subway)) %>%
+  ggplot(aes(x=location, y = value, fill = location)) + geom_col() + xlab("Neighborhood Type") + ylab("Minutes to Subway")+ ggtitle("Average minutes to subway ") + geom_text(aes(label = round(value,2)), vjust = -0.5, size=3) 
+
+rental_dataset1 %>%
+  group_by(neigh_selected) %>%
+  filter(!is.na(neigh_selected)) %>%
+  summarize(value = mean(min_to_subway)) %>%
+  ggplot(aes(x=neigh_selected, y = value, fill = neigh_selected)) + geom_col() + 
+  xlab("Neighborhood Type") + ylab("Minutes to Subway")+ ggtitle("Average minutes to subway ")+ 
+  geom_text(aes(label = round(value,2)), vjust = -0.5, size=3)+ 
+  theme(axis.text.x = element_text(angle = 90))
+
+```
+This is interesting we can see that there is a lot of variation on the time it takes to get to the subway depending on which specific neighborhood you live in. The Financial District is the closest to the subway while the Upper East Side takes the most amount of the time. The difference when factoring location decreases but still exists. We can see that apartments in Lower Manhattan  are at least a minute closer to the subway than apartments in Midtown and Upper Manhattan. Apartments are about the same distance to the subway in Midtown and Upper Manhattan. 
+
+
+
+Let's look at this graph again but this time comparing on close and far neighborhoods.
+```{r}
+rental_dataset1 %>%
+  group_by(location,time_status) %>%
+  filter(!is.na(location)) %>%
+  summarize(value = mean(min_to_subway)) %>%
+  ggplot(aes(x=location, y = value, fill = location))+ geom_col() + xlab("Neighborhood Type") + ylab("Minutes to Subway")+ ggtitle("Average minutes to subway ")+ geom_text(aes(label = round(value,2)), vjust = -0.5, size=3) + facet_wrap(~time_status)
+
+rental_dataset1 %>%
+  group_by(neigh_selected,time_status) %>%
+  filter(!is.na(neigh_selected)) %>%
+  summarize(value = mean(min_to_subway)) %>%
+  ggplot(aes(x=neigh_selected, y = value, fill = neigh_selected)) +
+  geom_col() + xlab("Neighborhood Type") + ylab("Minutes to Subway") + ggtitle("Average minutes to subway ")+ geom_text(aes(label = round(value,2)), vjust = -0.5, size=3)+ facet_wrap(~time_status) + theme(axis.text.x = element_text(angle = 90))
+
+```
+Interestingly we can see that the average minutes to the subway doesn't change that much for neighborhoods that are already close to the subway. Neighborhoods and Locations that are far from the subway have more variation. 
+
+
+
+3.3: PRICE VS OTHER VARIABLES
+
+**Sqft vs Rent**
+
+The most important variable we expect in determining price of an apartment rental is square feet. We believe that the greater the square feet, the higher the rent can be expected per month.  
+
+```{r}
+ggplot(rental_dataset1, aes(x = size_sqft, y = rent)) +
+  geom_point() + xlab("Square Feet") + ylab("Rent")+ ggtitle("Square Feet vs Rent vs Bedrooms") + scale_color_gradient(low = "white", high = "blue") + geom_smooth(method='lm', se=FALSE, color='black', alpha=0.5)
+
+```
+In this scatter plot we have mapped out the square feet variable on the x axis, and the rent variable on the y axis. Altogether this scatter plot demonstrates a moderate positive correlation between all three of these variables. Therefore we can guess on average that the greater the square footage of a property, the more the rent goes up. Additionally, the amount of bedrooms increases according to square footage. Let's look at this graph again this time controlling for the different neighborhoods. 
+
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(location)) %>%
+  ggplot(aes(x=size_sqft, y=rent, color = location)) + geom_point() + facet_wrap(~location)+xlab("Square Feet") + ylab("Rent") + ggtitle("Square Feet vs Rent") + geom_smooth(method='lm', se=FALSE, color='black', alpha=0.5)
+```
+As guessed the correlation holds through even for the different location. For the most part, the larger the apartment rental the higher the rent. Let's check one last time this time looking at individual neighborhoods. 
+
+```{r}
+rental_dataset1 %>%
+  group_by(neigh_selected) %>% 
+  summarize(mean_rent = mean(rent), mean_sqft = mean(size_sqft))  %>%
+  arrange(desc(mean_rent)) 
+
+```
+
+Interesting it shows that when factoring for individual neighborhoods the correlation weakens. A reason by this might be that some neighborhoods are just that expensive because of many factors even if they have smaller apartments. 
+
+**Beds vs Rent**
+```{r}
+rental_dataset1 %>%
+ggplot(aes(x=bedrooms, y= rent)) + 
+geom_point() +
+geom_smooth(method="lm", se = FALSE) +
+ ggtitle("Bedrooms vs Rent") + xlab("Bedrooms") + ylab("Rent")
 ```
 
 ```{r}
 rental_dataset1 %>%
   filter(!is.na(location)) %>%
-  ggplot(aes(x=size_sqft, y= floor)) +geom_point(color = "black") +geom_smooth(method="lm", se = FALSE, color ='blue') +ggtitle("Size SQFT vs Floor") + facet_wrap(~location)
+           ggplot(aes(x=bedrooms, y= rent)) +
+           geom_point() + geom_smooth(method="lm", se = FALSE)+
+           ggtitle("Bedrooms vs Rent by Neighborhood") + facet_wrap(~location)
 ```
 
+
+```{r}
+rental_dataset1 %>%
+  group_by(bedrooms) %>%
+  summarize(value = mean(rent)) %>%
+  ggplot(aes(x=bedrooms, y = value, fill = bedrooms ))+ geom_col(color = "black")+geom_text(aes(label = round(value)), vjust = -0.5, size=3) + xlab("Bedrooms") + ylab("Rent") + ggtitle("Bedroom vs Rent ")
+```
+
+We can see that the amount of bedrooms in the apartment has a clear correlation with the average rent. The more bedrooms there are in the apartment the higher the average rent price. This makes a lot of sense as we previously saw that bedrooms correlate with square feet which also has a strong effect on rent price. There is a big spike in rent price from 1 to 2 bedrooms with rent spiking on average around 2550 dollars and there is another spike in rent price from 2 to 3 bedrooms with rent spiking around 2700 dollars. 
+
+
+Let's see if the spike between 1-2 bedrooms and 2-3 bedrooms exists when we factor in for the diffent neighbrhoods. 
+```{r}
+rental_dataset1 %>%
+  group_by(bedrooms, location) %>%
+  filter(!is.na(location)) %>%
+  summarize(value = mean(rent)) %>%
+  ggplot(aes(x=bedrooms, y = value, fill = location ))+ geom_col(color = "black") + geom_text(aes(label = round(value)), vjust = -0.5, size=3) + xlab("Bedrooms") + ylab("Rent") + ggtitle("Bedroom vs Rent ") + facet_wrap(~location)
+
+```
+We can see that there is a similar spike in price between 1-2 bedrooms and 2-3 bedrooms in all three neighborhoods
+
+**Bathrooms vs Rent**
+```{r}
+rental_dataset1 %>%
+           ggplot(aes(x=bathrooms, y= rent)) +
+           geom_point() + geom_smooth(method="lm", se = FALSE)+
+           ggtitle("Bathrooms vs Rent") + xlab("Bathrooms") + ylab("Rent")
+```
+
+As expected there is an increase between bathrooms and rent. This makes a lot of sense as a bigger apartment can fit more bathrooms hence costing more money. 
+
+**Distance to Subway vs Rent**
+
+```{r}
+rental_dataset1 %>%
+  group_by(time_status) %>%
+  summarize( value = mean(rent)) %>%
+  ggplot(aes(x= time_status, y = value, fill = time_status))+ geom_col() + geom_text(aes(label = round(value)), vjust = -0.5, size=3) + xlab("Distance to Subway") + ylab("Mean rent ") + ggtitle("Distance to Subway vs Price") 
+
+
+
+```
+
+We can see that there is a clear difference is average rent price between an apartment that is close to the subway and an apartment that is further away from a subway. The difference in price between a far and close apartment is about 400 dollars. Lets see now if that difference also holds between the different neighborhoods. 
+
+```{r}
+rental_dataset1 %>%
+  group_by(time_status,location) %>%
+  summarize( value = mean(rent)) %>%
+  filter(!is.na(location)) %>%
+  ggplot(aes(x= time_status, y = value, fill = time_status)) + geom_col() + geom_text(aes(label = round(value)), vjust = -0.5, size=3)+ facet_wrap(~location) + xlab("Distance to Subway") + ylab("Mean rent ")+ ggtitle("Distance to Subway vs Price")
+
+
+```
+
+The correlation weakens but there is still a difference in rent price between close and far neighborhoods. In all three locations, an apartment that was close to the subway cost more than an apartment that was further away from the subway. A reason why the difference in price in Lower Manhattan might be so little is because of the fact that Lower Manhattan is just so expensive irregardless of the length of the subway. 
+
+**Floor vs Rent**
+
+We think that floor can have an impact on rent. The higher the floor, the higher the rent the owner might charge because of the better views outside the apartment. 
+```{r}
+rental_dataset1 %>%
+  ggplot(aes(x= floor, y = rent)) + geom_point() + xlab("Floor")+ ylab("Rent") +ggtitle("Floor vs Rent ")+ geom_point() + 
+  geom_smooth(method = 'lm', se = FALSE)
+
+
+```
+From the graph we can see the which floor you live does not have an impact on the rent price. The owner does not take in to account which floor the apartment rental is when determining what price to charge. 
+
+**Building Age vs Rent**
+
+```{r}
+rental_dataset1 %>%
+ggplot(aes(x=building_age_yrs, y= rent, color = "blue")) + 
+geom_point() + geom_smooth(method="lm", color="purple") +
+xlab("Building Age") + ylab("Rent")+ 
+  ggtitle("Building Age vs. Rent")
+```
+There seems to be a very weak negative correlation between building age and rent. For the most part the owner can charge whatever rental price he wants regardless of the age of the building. Lets see if the correlation increases if we break up the price range. 
+
+```{r}
+rental_dataset1 %>%
+filter(rent<=10000) %>%
+ggplot(aes(x=building_age_yrs, y= rent, color = "blue")) + 
+geom_point() + geom_smooth(method="lm", color="purple") +
+xlab("Building Age") + ylab("Rent<10000") +
+  ggtitle("Building Age vs. Rent")
+
+rental_dataset1 %>%
+filter(rent>=10000) %>%
+ggplot(aes(x=building_age_yrs, y= rent, color = "blue")) + 
+geom_point() + geom_smooth(method="lm", color="purple") +
+xlab("Building Age") + ylab("Rent>10000") +
+  ggtitle("Building Age vs. Rent")
+
+```
+
+Even after creating two graphs based on price we can see that the correlation really does not change. There is weak negative correlation under 5,000 between building age and rent, but when you look at rent prices above 5,000 dollars there is zero correlation. For the most part, the owner does not take into the account of the building age when thinking what rent to charge.
+
+**Amenities vs Rent** 
+```{r}
+library(gridExtra)
+library(ggrepel)
+
+g1 <- rental_dataset1 %>% 
+  pivot_longer(cols = starts_with("has")) %>%
+  filter(value==1) %>%
+  group_by(name) %>% 
+  summarize(mean_rent = mean(rent)) %>%
+  ggplot(aes(x=name,y= mean_rent, fill = name)) + 
+  geom_col() +theme(text = element_text(size=8))+ geom_text(aes(label = round(mean_rent)), vjust = -0.5, size=2)+ xlab("Name of the Amenity") + ylab(" Mean Rent") + ggtitle("With Amenity") 
+
+g2 <- rental_dataset1 %>% 
+  pivot_longer(cols = starts_with("has")) %>%
+  filter(value==0) %>%
+  group_by(name) %>% 
+  summarize(mean_rent = mean(rent)) %>%
+  ggplot(aes(x=name,y= mean_rent, fill = name)) + geom_col()+theme(text = element_text(size=8)) + 
+  geom_text(aes(label = round(mean_rent)), vjust = -0.5, size=2)+ xlab("Name of the Amenity") +
+  ylab(" Mean Rent") + ggtitle("Withouth Amenity") 
+
+grid.arrange(g1,g2)
+```
+
+We can see that amenities clearly has an effect on the price of a rental apartment with some amenities having a greater affect on rent than other amenities
+
+**Neighborhood vs Rent** 
 ```{r}
 rental_dataset1 %>%
   filter(!is.na(neigh_selected)) %>%
-  ggplot(aes(x= building_age_yrs, y = floor)) +geom_point(color = "black") +geom_smooth(method="lm", se = FALSE, color ='blue') +ggtitle("floor vs building Age ") + facet_wrap(~neigh_selected)
-```
+  group_by(neigh_selected) %>%
+  summarize(value = mean(rent)) %>%
+  ggplot(aes(x=neigh_selected,y = value, fill = neigh_selected))+ geom_col() + xlab("Location of Neighborhood") + ylab("Rent") +
+  ggtitle("Neighborhood vs Rent")+ geom_text(aes(label = round(value)), vjust = -0.5, size=3) +
+  theme(axis.text.x = element_text(angle = 90))
 
+```
+This graph shows that the neighborhood you live in has a strong influence on how much an apartment will cost. From the graph we can see the Central Harlem is the cheapest neighborhood to live in while Chelsea is the most expensive neighborhood to live in. 
+
+**Location vs Rent**
 ```{r}
 rental_dataset1 %>%
   filter(!is.na(location)) %>%
-  ggplot(aes(x= building_age_yrs, y = floor)) +geom_point(color = "black") +geom_smooth(method="lm", se = FALSE, color ='blue') +ggtitle("floor vs building Age ") + facet_wrap(~location)
+  group_by(location) %>%
+  summarize(value = mean(rent)) %>%
+  ggplot(aes(x=location,y = value, fill = location))+ geom_col() + xlab("Location of Neighborhood") + ylab("Rent")+ ggtitle("Location of Neighborhood vs Rent")+ geom_text(aes(label = round(value)), vjust = -0.5, size=3)
+
 ```
 
+As seen in the previous graph, Lower Manhattan is more expensive than both Midtown and Upper Manhattan by about 500 dollars. Midtown and Upper Manhattan are both similar in price.
+
+3.4: CHOOSING THE VARIABLES FOR OUR MODEL
+
+Based on our exploratory data analysis, if we were to pick just two variables at this stage, we would pick the size in square feet and neighborhood to be the most significant factors that affect rent price. However, we also want to include other variables in our model to determine which variables affect rent price through linear regression and to understand how much variation of the rent price can be explained by the different variables . 
+
+SECTION 4: MODELLING
+
+We choose to use a linear regression model with multiple explanatory variables. Let's create and use a training data set to build our model.
+
+CREATING TEST AND TRAIN DATASET
+```{r}
+library(caTools)
+set.seed(1)
+dataset_split <- sample.split(rental_dataset1, SplitRatio = 0.8)
+
+train <- subset(rental_dataset1, dataset_split == "TRUE")
+test <- subset(rental_dataset1, dataset_split == "FALSE")
+
+```
+
+Because we have categorical variables such as neighborhood and location, we want to ensure that the linear regression model includes them appropriately. 
+```{r}
+rental_dataset1$neighborhood = as.factor(rental_dataset1$neighborhood)
+```
+
+UNIVARIATE ANALYSIS AND INDIVIDUAL R^2 VALUES
+
+First, let's look at univariate models for each variable. We can take the  R^2 values and take a first glimpse at how much the variation of rent price can be explained by the variables, separately. We can also see if our assumptions about the most significant variables are reflected through the individual linear model. 
+
+BEDROOMS
+```{r}
+bedrooms_lm <- lm(rent~bedrooms, data = train)
+df <- data.frame(bedrooms = seq(0,5,1))
+
+predict <- df %>%
+  mutate(rent_price = predict(bedrooms_lm, df))
+predict
+bedrooms_rs <- summary(bedrooms_lm)$r.squared
+```
+The model reflects our assumption that the positive relationship between rent price and bedrooms is relatively strong. 
+
+BATHROOMS
+```{r}
+bathrooms_lm <- lm(rent~bathrooms, data = train)
+df <- data.frame(bathrooms = seq(1,5,1))
+
+predict <- df %>%
+  mutate(rent_price = predict(bathrooms_lm, df))
+predict
+bathrooms_rs <- summary(bathrooms_lm)$r.squared
+```
+
+The model reflects our assumption that the positive relationship between rent price and bathrooms is relatively strong. 
+
+SIZE_SQFT
+```{r}
+sqft_lm <- lm(rent~size_sqft, data = train)
+df <- data.frame(size_sqft = seq(500,3500,500))
+
+predict <- df %>%
+  mutate(rent_price = predict(sqft_lm, df))
+predict
+sqft_rs <- summary(sqft_lm)$r.squared
+```
+The model illustrates that the positive relationship between rent price and size is relatively strong, as expected. 
+
+BUILDING AGE 
+```{r}
+ba_lm <- lm(rent~building_age_yrs, data = train)
+df <- data.frame(building_age_yrs= seq(10,180, 20))
+
+predict <- df %>%
+  mutate(rent_price = predict(ba_lm, df))
+predict
+
+ba_rs <- summary(ba_lm)$r.squared
+```
+As expected from our exploratory data analysis, the model illustrates the weak negative correlation between building age and rent price.
+
+
+HAS_WASHER_DRYER
+```{r}
+ws_lm <- lm(rent~has_washer_dryer, data = train)
+df <- data.frame(has_washer_dryer= unique(train$has_washer_dryer))
+
+predict <- df %>%
+  mutate(rent_price = predict(ws_lm, df))
+predict
+ws_rs <- summary(ws_lm)$r.squared
+```
+The linear model shows that there is a decent jump in price, about 500 dollars, to get an apartment that includes a laundry unit, which is similar to the difference in average rent price found in our exploratory data analysis.
+
+
+```{r}
+dw_lm <- lm(rent~has_dishwasher, data = train)
+dw_rs <- summary(dw_lm)$r.squared
+
+p_lm <- lm(rent~has_patio, data = train)
+p_rs <- summary(p_lm)$r.squared
+
+rd_lm <- lm(rent~has_roofdeck, data = train)
+rd_rs <- summary(rd_lm)$r.squared 
+
+dm_lm <- lm(rent~has_doorman, data = train)
+dm_rs <- summary(dm_lm)$r.squared 
+
+he_lm <- lm(rent~has_elevator, data = train)
+he_rs <- summary(he_lm)$r.squared 
+
+gym_lm <- lm(rent~has_gym, data = train)
+gym_rs <- summary(gym_lm)$r.squared 
+
+neighborhood_lm <- lm(rent~neighborhood, data = train)
+neighborhood_rs <- summary(neighborhood_lm)$r.squared 
+
+name <- c("bedrooms", "bathrooms", "size_sqft", 
+          "building age", "has_washer_dryer", "has_dishwasher", 
+          "has_patio", "has_roofdeck", "has_doorman", "has_elevator", 
+          "has_gym","neighborhood")
+r_squared <- c(bedrooms_rs, bathrooms_rs, sqft_rs, ba_rs, ws_rs, dw_rs, p_rs, rd_rs, dm_rs, he_rs, gym_rs, neighborhood_rs)
+df_r <- data.frame(name, r_squared)
+df_r %>%
+  arrange(desc(r_squared))
+```
+Similar to our prediction, the size in square feet is the most significant factor here with the largest r-squared value. It also makes sense that size in square feet is followed by bathrooms and bedrooms. However, the r-squared value of neighborhood is lower than we thought it would be. 
+
+
+MULTIVARIATE ANALYSIS
+
+```{r}
+rent_lm <- lm(rent~ size_sqft + bathrooms + floor + building_age_yrs +
+                                has_roofdeck + has_washer_dryer + has_doorman +
+                                has_elevator + has_dishwasher + has_patio + has_gym
+                              + neighborhood, train)
+summary(rent_lm)
+```
+We took out bedrooms because it can be seen as a proxy for size_sqft, also because the high correlation between bedrooms and size_sqft may increase error due to multicollinearity. Our model is relatively strong, with an R^2 value of about 0.83, meaning that about 81% of the variation of the rent price can be attributed to our variables, collectively. 
+
+
+PREDICTING PRICES WITH TEST DATASET
+```{r}
+library(Metrics)
+
+df <- data.frame(rent = test$rent, neighborhood = test$neighborhood) 
+
+
+test_rent <- df %>%
+  mutate(predicted_rent = predict(rent_lm, test), diff = abs(predicted_rent - rent))
+
+test_rent %>%
+  head(n= 10) %>%
+  select(-neighborhood)
+
+average_diff<- mean(test_rent$diff)
+
+root_mse <- rmse(test_rent$rent, test_rent$predicted_rent)
+
+average_diff
+root_mse
+```
+Our prediction performance is not very accurate, with a average difference of around 756 dollars and a root squared mean of around 1138 dollars. However, it is not terribly off either. One could say that our prediction performance is moderately weak. 
+
+VISUALIZING OUR MODEL WITH RESIDUALS
+```{r}
+res<- resid(rent_lm)
+plot(fitted(rent_lm), res, ylab = "Residuals", xlab = "Rent Price", main = "Residual Plot") 
+abline(0,0)
+```
+With our residual plot, we can see that the spread of residuals of our model tend to be higher for rent prices starting from about 8,000 dollars. It is clear that our model has both underfit and overfit when predicting rent prices. 
+
+```{r}
+ggplot(test_rent, aes(y = abs(diff), x = rent)) + geom_point()+ 
+  ggtitle("Residuals vs Rent(actual values)")
+```
+We can see that for rents until about 5000 dollars, the model performs best as the difference between the actual and predicted price mainly ranges from 0 to 1250 dollars. However, the model performs worse and the differences are spread out past 5000 dollars, especially in the higher price ranges.
+
+
+```{r}
+test_rent %>%
+  ggplot(aes(x = neighborhood, y = diff)) + geom_boxplot(alpha = 0.3) +
+  theme(axis.text.x = element_text(angle = 90))+ ggtitle("Residual Plot for Different Neighborhoods")
+```
+It is interesting that for some neighborhoods, our model was not good at predicting the rent prices within certain neighborhoods. For Central Park South, Soho, Nolita, and Washington Heights, the differences between the predicted rent prices and actual rent prices was the greatest. 
+
+IMPROVING OUR PREDICTED RENT PRICES WITH OUR MODEL
+
+Even though our R^2 values were high for our linear model, our predicted prices were way off. Perhaps this is because there are too many neighborhoods. Initially, we wanted to compare all the present neighborhoods because we wanted to explore the groupings of "neighborhood' and "upper/lower/mid Manhattan". However, we realize that because there are so many neighborhoods, this may lead to increased sources of error.
+
+Let's remove data that include the neighborhoods we identified earlier that our model did not predict rent prices well for: Central Park South, Soho, Nolita, and Washington Heights. 
+
+```{r}
+train2 <- train %>%
+  filter(!neighborhood == c("Central Park South", "Soho", "Nolita", "Washington Heights"))
+
+rent_lm1 <- lm(rent~ size_sqft  + floor + bathrooms + building_age_yrs +has_roofdeck + has_washer_dryer + has_doorman +
+has_elevator + has_dishwasher + has_patio + has_gym
+                              + neighborhood, data = train2)
+
+df <- data.frame(rent = train2$rent)
+
+train2_rent <- df %>%
+  mutate(predicted_rent = predict(rent_lm1, train2), diff = abs(predicted_rent - rent))
+
+train2_rent %>%
+  head(n= 10)
+
+mean(train2_rent$diff)
+```
+Unfortunately, removing neighborhoods that had greater residuals did not greatly improve our rent prediction, as the mean difference is about 874 dollars compared to our initial test, which was 766 dollars - our predictions worsened.
+
+
+
+Let's see if we can improve our prediction prices further only by selecting a few neighborhoods that are near each other in Manhattan; with less neighborhoods, perhaps our model can fit the data better. Let's also filter the rent prices to be 5000 dollars or less. 
+```{r}
+train3 <- train %>%
+  filter(neighborhood == c("Upper East Side", "Manhattanville", "Upper West Side", "Hamilton Heights", "West Harlem", "Central Park South", "Washington Heights")) %>%
+  filter(rent < 5000)
+
+rent_lm2 <- lm(rent~ size_sqft + floor + bathrooms + building_age_yrs +has_roofdeck + has_washer_dryer + has_doorman + has_elevator + has_dishwasher + has_patio + has_gym + neighborhood, data = train3)
+
+df <- data.frame(rent = train3$rent)
+
+train3_rent <- df %>%
+  mutate(predicted_rent = predict(rent_lm2, train3), diff = abs(predicted_rent - rent))
+
+train3_rent %>%
+  head(n= 10)
+
+mean(train3_rent$diff)
+```
+Filtering the rent to be less than 5000 dollars and limiting our data to a small number of neighborhoods significantly improved our rent prediction. We went from a mean difference of 766 and 874 dollars to about 276 dollars, which is a significant improvement. 
+
+COEFFICIENT ANALYSIS 
+
+```{r}
+rent_lm <- lm(rent~ size_sqft + bathrooms + floor + building_age_yrs +
+                                has_roofdeck + has_washer_dryer + has_doorman +
+                                has_elevator + has_dishwasher + has_patio + has_gym
+                              + neighborhood, train)
+summary(rent_lm)
+```
+
+We will ignore variables with p-values less than 0.05, since they are not statistically significant and cannot explain the variation of the rent price. 
+
+The variables that are statistically significant include size_sqft, bathrooms, floor, building_age_yrs, and some neighborhoods such as Central Park South, Central Harlem, Financial District, etc. 
+
+Out of these, certain neighborhoods have the largest absolute value coefficients compared to the reference, which is Battery Park City. The top 3 neighborhoods with the largest absolute value coefficients include Washington Heights at about -1992 dollars, West Village at 1855 dollars, and Central Harlem at -1707 dollars. In comparison to Battery Park City rent prices, Washington Heights is about 1992 dollars less, Central Harlem is 1707 dollars less, and the West Village is 1855 dollars more. As we can see, the rent prices vary greatly by neighborhood, thus reflecting that neighborhood is a significant factor in apartment rent prices. 
+
+Out of the other statistically significant variables, bathrooms seem to effect rent price the most as an increase of one bathroom yields an average increase of about 992 dollars. Interestingly, having a washer/dryer adds an average of 210 dollars, while the size in square feet, adds around 4 dollars per square foot. 
+
+In terms of floor, an increase in one floor adds about 30 dollars to the rent price, which is expected as generally in Manhattan a higher floor means a better view. The building age seems to not matter much with a coefficient of -6. 
+
+INSIGHTS 
+
+With our linear model, it is evident that our selected variables affect the rent price greatly, the most important variables being neighborhood and bathrooms. This makes sense, as Manhattan is such a diverse and populous city with various historical factors influencing the creation of specific neighborhoods. Specifically in New York, it makes sense that rent prices vary greatly among different neighborhoods -- location of Uptown, Midtown and Downtown don't matter too much in comparison. 
+
+While the R^2 value of our linear model was relatively high around 0.82, the predictive power of our linear model was certainly limited. While neighborhoods certainly affect the rent price, it causes a lot of variation among prices which the linear model might not have been able to notice.
+
+Why did our linear model not work as well as we had thought? Well, in Manhattan and specifically for our dataset, there are probably many other factors that are not included in this dataset that affect the rent price. For instance, having a view of the skyline, whether your apartment faces a garage, or it overlooks the Hudson River -- there are so many other factors in NYC that could affect the rent price which are not in our dataset. This thought is even more emphasized by the fact that Manhattan is so diverse and such as distinct city from others. The predictive power of our model most likely was not able to pick up on these other variables. 
+
+With our predictions, we were able to improve them by sub-setting and resizing our dataset. Because rent prices vary so greatly across Manhattan, it makes sense that our model could predict the apartment prices of a few neighborhoods with 5000 dollars or less-- this  price range could be seen as more of a "typical" experience of someone looking to rent an apartment. It was more difficult for our model to predict higher prices; which, again, could be explained by the existence of other factors beyond the data set. 
+
+IMPROVEMENTS
+
+In terms of improvements, before modeling, we would restrict the data set to a few significant neighborhoods with relatively equal amounts of data in order to make our linear regression more precise. Predicting prices through the entire geographical area of Manhattan probably introduced more error. 
+Furthermore, we could also improve our "close/far" metric; we used the mean of the times to distinguish between close and far, but perhaps 5 minutes was too low to be considered "far". The "close/far" metric may have been more significant in both our analysis and modelling if we had chosen a higher number such as 7 or 8 minutes.
+
+Also, to address the outside factors that could have influenced rent price in Manhattan, we would probably also add another dataset with information on factors such as the skyline view of the apartment or if it faces a garage -- this could make our predictive power much better.
+
+CONCLUSION
+
+While some relationships between the rent price and variables were relatively weak, we found that there were relatively strong correlations between rent price and bathrooms, bedrooms, size in square feet, and neighborhood. As for the minutes to the subway, we thought that it would have a much greater impact on the rent price, but our exploratory data analysis reflected that the minutes to the subway did not affect the rent price that much. It was suprising that most of the amenities did not really affect the rent price, as we thought that having a doorman would be significant in Manhattan, when in contrast, it seems that having a washer/dryer unit is more significant. Furthermore, in terms of the floor, we had thought that the higher the floor, the more expensive the listing -- the correlation was not as strong as we had thought. Perhaps, even if an apartment is on a higher floor, if its view is not considered to be aesthetically pleasing or if the view is blocked somehow, the rent price could be affected by this. In general, after our exploratory data analysis and modeling, we see that neighborhood is arguably the most important factor along with the bathrooms an apartment has and the size in square feet. With our predictions, when restricting the amount of neighborhoods, the impact on the accuracy was significant. Having a washer-dryer unit is also important, but less in comparison to the former variables. Overall, floor and building age tended to have a weaker relationship to rent price and thus its predictive power was weaker as well. By looking at our exploratory data analysis, linear model and its coefficients, and the predicted prices of our model, we were able to determine the significant factors affecting rent price in Manhattan.
