@@ -1,0 +1,229 @@
+---
+title: "New York"
+author: "Aryan Gupta"
+date: "2022-11-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+Section 2 - Data Loading + Cleanup 
+2.1 - Loading, joining and cleaning our data
+
+```{r}
+new_york <- read.csv("manhattan.csv")
+
+rental_dataset <- new_york %>%
+  select(-rental_id, -borough) 
+
+head(rental_dataset)
+
+```
+
+
+
+
+
+```{r}
+library(ggplot2)
+ggplot(rental_dataset) +
+  aes(x = floor) +
+  geom_histogram(bins = 10, color = "purple", fill = "pink") 
+```
+We plot out the variable of floors to check if there are any outliers. Clearly there are some outliers around 75 floors. The distribution is highly skewed to the right. 
+
+```{r}
+library(ggplot2)
+data(new_york)
+ggplot(new_york) +
+  aes(x = size_sqft) +
+  geom_histogram(bins = 10, color = "purple", fill = "pink") 
+```
+
+We plot out the variable of square feet to check if there are any outliers. Clearly there are some outliers around 3,500 square feet and 0 square feet. This distribution is skewed mostly right. 
+
+```{r}
+filteredNY <- new_york %>%
+ggplot(filteredNY) +
+  aes(x = size_sqft) +
+  geom_bar( color = "purple", fill = "blue") 
+```
+```{r}
+max(new_york$size_sqft)
+
+```
+
+
+After we have filtered out ouliers and plotted the data for the square footage, the graph is shown to be more clearly skewed to the right. 
+
+```{r}
+filteredNY <- new_york %>%
+  filter(floor < 75)
+
+ggplot(filteredNY) +
+  aes(x = floor) +
+  geom_histogram(bins = 10, color = "purple", fill = "blue") 
+```
+
+After we have filtered out ouliers and plotted the data for the number of floors, the graph is shown to be more clearly skewed to the right. 
+
+
+
+```{r}
+rental_dataset %>%
+  ggplot(aes(x = bathrooms)) + geom_histogram(fill='lightgreen', color='black', bin = 30) +
+xlab("Bathrooms") + ylab("Count") + ggtitle("Bathrooms histogram")
+```
+
+The distribution is fairly skewed right with most apartments having 1-2 bathrooms, however there are no major outliers.
+
+
+```{r}
+rental_dataset %>%
+  ggplot(aes(x = bedrooms)) + geom_histogram(fill='pink', color='black') +
+xlab("Bedrooms") + ylab("Count") + ggtitle("Bedrooms histogram") 
+```
+
+The distribution is fairly even with a slight skew to the right. There is an abundance of whole number bedrooms with a slight number of half-bedrooms.
+
+
+```{r}
+rental_dataset %>%
+  ggplot(aes(x = building_age_yrs)) + geom_histogram(fill='orange', color='black', bins = 30) +
+xlab("Building Age in Years") + ylab("Count") + ggtitle("Building Age histogram") 
+```
+
+The distribution is even with one outlier which is the building older than 175 years.
+
+```{r}
+rental_dataset %>%
+  ggplot(aes(x = rent)) + geom_histogram(fill='purple', color='black', bins = 30) +
+xlab("Rent Price in Dollars") + ylab("Count") + ggtitle(" Rental Price histogram")
+```
+
+The distribution is slightly skewed to the right, with most prices being between 1,000 and 5,000 dollars, however the removal of outliers may not be necessary. 
+
+```{r}
+rental_dataset %>%
+  ggplot(aes(x = min_to_subway)) + geom_histogram(fill='purple', color='black', bins = 30) +
+xlab("Minutes to the Subway") + ylab("Count") + ggtitle("Time to Subway histogram") 
+```
+The distribution is slightly skewed to the right, with most times being between 0 and 10 minutes to the nearest subway. Interestingly enough lets look at the 40+ minutes to the subway. 
+
+```{r}
+rental_dataset %>%
+  filter(min_to_subway>40) %>%
+  distinct(neighborhood)
+```
+
+After checking on Google and street easy we decided to drop these values at it does not make sense for someone to talk 40+ minutes to walk to the subway. In all these 5 neighborhoods there is a subway that takes less than 40 minutes to walk. Even after dropping these rows we will have enough values in our dataset. Let's now look at the graph without the 40+ minutes to the subway present.
+
+
+```{r}
+rental_dataset <- rental_dataset %>%
+  filter(min_to_subway<40)
+  
+rental_dataset %>%
+    ggplot(aes(x = min_to_subway)) + geom_histogram(fill='purple', color='black', bins = 30) +
+xlab("Minutes to the Subway <40") + ylab("Count") + ggtitle("Time to Subway histogram") 
+view(rental_dataset)
+```
+
+
+
+
+```{r}
+rental_dataset %>% pivot_longer(cols = starts_with("has")) %>% 
+  select(location, name, value) %>%
+  group_by(location, name) %>%
+  summarize(prop = mean(value)) %>%
+  filter(!is.na(location))%>%
+  filter(location=="Midtown") %>%
+  ggplot(aes(x = name, fill = name, y = prop))+ theme(text = element_text(size=8)) +
+  geom_col(color = "black") + xlab("Midtown") + ylab("Frequency") + ggtitle("Amenties per neighborhood")
+
+```
+
+
+```{r}
+rental_dataset %>% pivot_longer(cols = starts_with("has")) %>% 
+  select(location, name, value) %>%
+  group_by(location, name) %>%
+  summarize(prop = mean(value)) %>%
+  filter(!is.na(location))%>%
+  filter(location=="Upper Manhatttan") %>%
+  ggplot(aes(x = name, fill = name, y = prop))+ theme(text = element_text(size=8)) +
+  geom_col(color = "black") + xlab("Upper Manhatttan") + ylab("Frequency") + ggtitle("Amenties per neighborhood")
+
+```
+
+3.3: THREE RELATIONSHIP GRAPHS 
+
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(location)) %>%
+ggplot(aes(x=bedrooms, y= bathrooms, color = size_sqft)) + 
+geom_point() +
+geom_smooth(method="lm", se = FALSE) +
+xlab("Bedrooms") + ylab("Bathrooms") + ggtitle("Bedrooms vs. Bathrooms vs Square Feet")
+```
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(neigh_selected)) %>%
+ggplot(aes(x=bedrooms, y= bathrooms, color = size_sqft)) + 
+geom_point() +
+geom_smooth(method="lm", se = FALSE) +
+xlab("Bedrooms") + ylab("Bathrooms") + ggtitle("Bedrooms vs. Bathrooms vs Square Feet by Neighborhood") + facet_wrap(~neigh_selected)
+```
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(location)) %>%
+ggplot(aes(x=bedrooms, y= bathrooms, color = size_sqft)) + 
+geom_point() +
+geom_smooth(method="lm", se = FALSE) +
+xlab("Bedrooms") + ylab("Bathrooms") + ggtitle("Bedrooms vs. Bathrooms vs Square Feet by Location") + facet_wrap(~location)
+```
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(neigh_selected)) %>%
+ggplot(aes(x=bathrooms, y= floor))+ 
+geom_point(color = "black") +
+geom_smooth(method="lm", se = FALSE, color = 'blue') +
+ ggtitle("Bathrooms vs floor vs neighborhood") + facet_wrap(~neigh_selected)
+```
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(location)) %>%
+ggplot(aes(x=bathrooms, y= floor))+ 
+geom_point(color = "black") +
+geom_smooth(method="lm", se = FALSE, color = 'blue') +
+ ggtitle("Bathrooms vs floor vs location") + facet_wrap(~location)
+```
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(neigh_selected)) %>%
+  ggplot(aes(x=size_sqft, y= floor)) +geom_point(color = "black") +geom_smooth(method="lm", se = FALSE, color ='blue') +ggtitle("Size SQFT vs Floor") + facet_wrap(~neigh_selected)
+```
+
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(location)) %>%
+  ggplot(aes(x=size_sqft, y= floor)) +geom_point(color = "black") +geom_smooth(method="lm", se = FALSE, color ='blue') +ggtitle("Size SQFT vs Floor") + facet_wrap(~location)
+```
+
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(neigh_selected)) %>%
+  ggplot(aes(x= building_age_yrs, y = floor)) +geom_point(color = "black") +geom_smooth(method="lm", se = FALSE, color ='blue') +ggtitle("floor vs building Age ") + facet_wrap(~neigh_selected)
+```
+
+```{r}
+rental_dataset1 %>%
+  filter(!is.na(location)) %>%
+  ggplot(aes(x= building_age_yrs, y = floor)) +geom_point(color = "black") +geom_smooth(method="lm", se = FALSE, color ='blue') +ggtitle("floor vs building Age ") + facet_wrap(~location)
+```
+
